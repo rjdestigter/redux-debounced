@@ -28,5 +28,9 @@
     "mocha": "^2.3.3",
     "redux": "^3.0.2",
     "sinon": "^1.17.1"
+  },
+  "dependencies": {
+    "lodash": "^4.13.1",
+    "lodash.debounce": "^4.0.6"
   }
 }
