@@ -1,5 +1,7 @@
+import debounce from 'lodash.debounce'
+
 export default () => {
-  let timers = {};
+  let debouncers = {};
 
   const middleware = () => dispatch => action => {
     const {
@@ -10,7 +12,8 @@ export default () => {
     const {
       time,
       key = type,
-      cancel = false
+      cancel = false,
+      options = {},
     } = debounce;
 
     const shouldDebounce = (time && key) || (cancel && key);
@@ -19,18 +22,22 @@ export default () => {
       return dispatch(action);
     }
 
-    if (timers[key]) {
-      clearTimeout(timers[key]);
+    if (!debouncers[key]) {
+      debouncers[key] = {
+        time,
+        debounced: _.debounce((action) => dispatch(action), time, options)
+      }
     }
 
-    if (!cancel) {
-      timers[key] = setTimeout(() => {
-      dispatch(action);
-      }, time);
+    const { debounced } = debouncers[key]
+    if (cancel) {
+      debouncer.cancel()
+    } else {
+      debouncer(action)
     }
   };
 
-  middleware._timers = timers;
+  middleware._debouncers = debouncers;
 
   return middleware;
 };
